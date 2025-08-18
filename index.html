@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Whack-a-Box Game</title>
+    <title>Whack a Box Game</title>
     <style>
       * {
         margin: 0;
@@ -215,6 +215,9 @@
         init() {
           this.startBtn.addEventListener("click", () => this.startGame());
           this.resetBtn.addEventListener("click", () => this.resetGame());
+          this.canvas.addEventListener("click", (e) =>
+            this.handleCanvasClick(e)
+          );
         }
 
         startGame() {
@@ -240,10 +243,10 @@
             }
           }, 1000);
 
-          // Box creation timer - creates new box every 2 seconds
+          // Box creation timer
           this.boxInterval = setInterval(() => {
             this.createBox();
-          }, 2000);
+          }, 1500);
         }
 
         createBox() {
@@ -267,10 +270,35 @@
           this.currentBox.style.left = x + "px";
           this.currentBox.style.top = y + "px";
 
-          // Note: No click handler yet - this is the midpoint version
-          // The box will just appear and disappear without interaction
+          // Add click handler
+          this.currentBox.addEventListener("click", (e) => {
+            e.stopPropagation();
+            this.hitBox();
+          });
 
           this.canvas.appendChild(this.currentBox);
+        }
+
+        hitBox() {
+          if (!this.gameActive || !this.currentBox) return;
+
+          this.score += 10;
+          this.updateDisplay();
+
+          // Remove the box immediately
+          this.currentBox.remove();
+          this.currentBox = null;
+
+          // Create new box faster after hit
+          setTimeout(() => this.createBox(), 200);
+        }
+
+        handleCanvasClick(e) {
+          // Penalty for missing the box
+          if (this.gameActive && e.target === this.canvas) {
+            this.score = Math.max(0, this.score - 2);
+            this.updateDisplay();
+          }
         }
 
         updateDisplay() {
