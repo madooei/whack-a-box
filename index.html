@@ -192,7 +192,151 @@
     </div>
 
     <script>
-      // TODO Implement me!
+      class WhackABoxGame {
+        constructor() {
+          this.canvas = document.getElementById("gameCanvas");
+          this.scoreElement = document.getElementById("score");
+          this.timerElement = document.getElementById("timer");
+          this.startBtn = document.getElementById("startBtn");
+          this.resetBtn = document.getElementById("resetBtn");
+          this.gameOverDiv = document.getElementById("gameOver");
+          this.finalScoreElement = document.getElementById("finalScore");
+
+          this.score = 0;
+          this.timeLeft = 30;
+          this.gameActive = false;
+          this.currentBox = null;
+          this.gameInterval = null;
+          this.boxInterval = null;
+
+          this.init();
+        }
+
+        init() {
+          this.startBtn.addEventListener("click", () => this.startGame());
+          this.resetBtn.addEventListener("click", () => this.resetGame());
+        }
+
+        startGame() {
+          if (this.gameActive) return;
+
+          this.gameActive = true;
+          this.score = 0;
+          this.timeLeft = 30;
+          this.gameOverDiv.style.display = "none";
+          this.startBtn.disabled = true;
+          this.startBtn.textContent = "Playing...";
+
+          this.updateDisplay();
+          this.createBox();
+
+          // Game timer
+          this.gameInterval = setInterval(() => {
+            this.timeLeft--;
+            this.updateDisplay();
+
+            if (this.timeLeft <= 0) {
+              this.endGame();
+            }
+          }, 1000);
+
+          // Box creation timer - creates new box every 2 seconds
+          this.boxInterval = setInterval(() => {
+            this.createBox();
+          }, 2000);
+        }
+
+        createBox() {
+          if (!this.gameActive) return;
+
+          // Remove existing box
+          if (this.currentBox) {
+            this.currentBox.remove();
+          }
+
+          // Create new box
+          this.currentBox = document.createElement("div");
+          this.currentBox.className = "box";
+
+          // Random position (accounting for box size)
+          const maxX = this.canvas.offsetWidth - 60;
+          const maxY = this.canvas.offsetHeight - 60;
+          const x = Math.random() * maxX;
+          const y = Math.random() * maxY;
+
+          this.currentBox.style.left = x + "px";
+          this.currentBox.style.top = y + "px";
+
+          // Note: No click handler yet - this is the midpoint version
+          // The box will just appear and disappear without interaction
+
+          this.canvas.appendChild(this.currentBox);
+        }
+
+        updateDisplay() {
+          this.scoreElement.textContent = this.score;
+          this.timerElement.textContent = this.timeLeft;
+        }
+
+        endGame() {
+          this.gameActive = false;
+
+          // Clear intervals
+          if (this.gameInterval) {
+            clearInterval(this.gameInterval);
+          }
+          if (this.boxInterval) {
+            clearInterval(this.boxInterval);
+          }
+
+          // Remove current box
+          if (this.currentBox) {
+            this.currentBox.remove();
+            this.currentBox = null;
+          }
+
+          // Show game over
+          this.finalScoreElement.textContent = this.score;
+          this.gameOverDiv.style.display = "block";
+
+          // Reset button
+          this.startBtn.disabled = false;
+          this.startBtn.textContent = "Play Again";
+        }
+
+        resetGame() {
+          this.gameActive = false;
+
+          // Clear intervals
+          if (this.gameInterval) {
+            clearInterval(this.gameInterval);
+          }
+          if (this.boxInterval) {
+            clearInterval(this.boxInterval);
+          }
+
+          // Remove current box
+          if (this.currentBox) {
+            this.currentBox.remove();
+            this.currentBox = null;
+          }
+
+          // Reset values
+          this.score = 0;
+          this.timeLeft = 30;
+          this.updateDisplay();
+
+          // Reset UI
+          this.gameOverDiv.style.display = "none";
+          this.startBtn.disabled = false;
+          this.startBtn.textContent = "Start Game";
+        }
+      }
+
+      // Initialize game when page loads
+      document.addEventListener("DOMContentLoaded", () => {
+        new WhackABoxGame();
+      });
     </script>
   </body>
 </html>
