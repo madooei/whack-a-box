@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Whack a Box Game</title>
+    <title>Whack-a-Box Game - Cyberpunk Edition</title>
     <style>
       * {
         margin: 0;
@@ -12,32 +12,51 @@
       }
 
       body {
-        font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont,
-          "Segoe UI", Roboto, sans-serif;
-        background: linear-gradient(135deg, #0f0f23, #1a1a2e);
-        color: #e94560;
+        font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace;
+        background: linear-gradient(135deg, #0a0a0f, #1a0a2e);
+        color: #00d4ff;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         padding: 20px;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+          radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(138, 43, 226, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
       }
 
       .container {
         text-align: center;
         max-width: 600px;
         width: 100%;
+        position: relative;
+        z-index: 1;
       }
 
       h1 {
         font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 1rem;
-        background: linear-gradient(45deg, #e94560, #f27121);
+        background: linear-gradient(45deg, #00d4ff, #8a2be2);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+        text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        letter-spacing: 2px;
       }
 
       .game-info {
@@ -49,55 +68,104 @@
 
       .score,
       .timer {
-        background: rgba(233, 69, 96, 0.1);
-        border: 2px solid rgba(233, 69, 96, 0.3);
+        background: rgba(0, 212, 255, 0.1);
+        border: 2px solid rgba(0, 212, 255, 0.4);
         border-radius: 12px;
         padding: 1rem 1.5rem;
         font-size: 1.2rem;
         font-weight: 600;
         flex: 1;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .score::before,
+      .timer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.2), transparent);
+        animation: scan 3s infinite;
+      }
+
+      @keyframes scan {
+        0% { left: -100%; }
+        100% { left: 100%; }
       }
 
       .game-canvas {
         width: 400px;
         height: 400px;
-        background: rgba(26, 26, 46, 0.8);
-        border: 3px solid rgba(233, 69, 96, 0.4);
+        background: rgba(10, 10, 15, 0.9);
+        border: 3px solid rgba(0, 212, 255, 0.6);
         border-radius: 16px;
         position: relative;
         margin: 0 auto 2rem;
         cursor: crosshair;
         overflow: hidden;
-        box-shadow: 0 0 30px rgba(233, 69, 96, 0.2);
+        box-shadow: 
+          0 0 30px rgba(0, 212, 255, 0.3),
+          inset 0 0 30px rgba(0, 212, 255, 0.1);
+        backdrop-filter: blur(5px);
+      }
+
+      .game-canvas::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+          linear-gradient(90deg, transparent 49%, rgba(0, 212, 255, 0.1) 50%, transparent 51%),
+          linear-gradient(0deg, transparent 49%, rgba(0, 212, 255, 0.1) 50%, transparent 51%);
+        background-size: 40px 40px;
+        opacity: 0.3;
+        pointer-events: none;
       }
 
       .box {
         width: 60px;
         height: 60px;
-        background: linear-gradient(45deg, #e94560, #f27121);
+        background: linear-gradient(45deg, #00d4ff, #8a2be2);
         border-radius: 8px;
         position: absolute;
         cursor: pointer;
         transition: all 0.1s ease;
-        box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
-        animation: pulse 1s infinite alternate;
+        box-shadow: 
+          0 0 20px rgba(0, 212, 255, 0.6),
+          inset 0 0 20px rgba(138, 43, 226, 0.3);
+        animation: cyberPulse 1.5s infinite alternate;
+        border: 2px solid rgba(0, 212, 255, 0.8);
       }
 
       .box:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 20px rgba(233, 69, 96, 0.6);
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 
+          0 0 30px rgba(0, 212, 255, 0.8),
+          inset 0 0 30px rgba(138, 43, 226, 0.5);
+        border-color: #00d4ff;
       }
 
       .box:active {
-        transform: scale(0.9);
+        transform: scale(0.9) rotate(-5deg);
       }
 
-      @keyframes pulse {
+      @keyframes cyberPulse {
         from {
-          box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+          box-shadow: 
+            0 0 20px rgba(0, 212, 255, 0.6),
+            inset 0 0 20px rgba(138, 43, 226, 0.3);
         }
         to {
-          box-shadow: 0 4px 25px rgba(233, 69, 96, 0.7);
+          box-shadow: 
+            0 0 35px rgba(0, 212, 255, 0.9),
+            inset 0 0 35px rgba(138, 43, 226, 0.6);
         }
       }
 
@@ -108,7 +176,7 @@
       }
 
       button {
-        background: linear-gradient(45deg, #e94560, #f27121);
+        background: linear-gradient(45deg, #00d4ff, #8a2be2);
         color: white;
         border: none;
         padding: 1rem 2rem;
@@ -117,12 +185,32 @@
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+
+      button:hover::before {
+        left: 100%;
       }
 
       button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5);
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.7);
       }
 
       button:active {
@@ -136,12 +224,25 @@
       }
 
       .game-over {
-        background: rgba(233, 69, 96, 0.1);
-        border: 2px solid rgba(233, 69, 96, 0.3);
+        background: rgba(0, 212, 255, 0.1);
+        border: 2px solid rgba(0, 212, 255, 0.4);
         border-radius: 12px;
         padding: 2rem;
         margin-top: 2rem;
         display: none;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+      }
+
+      .game-over h2 {
+        color: #00d4ff;
+        margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+      }
+
+      .game-over p {
+        color: #8a2be2;
+        margin-bottom: 0.5rem;
       }
 
       @media (max-width: 500px) {
