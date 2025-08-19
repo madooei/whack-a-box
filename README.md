@@ -1,4 +1,4 @@
-# Wack-a-box
+# Whack-a-box
 
 The goal is to click on rendomly appearing boxes on the screen to score points.
 
